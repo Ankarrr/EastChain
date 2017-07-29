@@ -11,7 +11,7 @@ contract Wine {
         string purpose; // e.g. general, wedding
         string description;
     }
-    
+
     address public creator;
     // (barcode => Sorghum)
     mapping (uint => Sorghum) public SorgHums;
@@ -19,7 +19,7 @@ contract Wine {
     function Wine() {  
         creator = msg.sender;    
     }
-    
+
     function createSorghum(
         uint barcode,
         address owner,
@@ -32,5 +32,10 @@ contract Wine {
         string description) {
         SorgHums[barcode] = Sorghum(
             owner, name, productType, date, origin, price, purpose, description);
+    }
+
+    function transferSunghum(uint barcode, address receiver){
+        require(SorgHums[barcode].owner == msg.sender);
+        SorgHums[barcode].owner = receiver;
     }
 }
