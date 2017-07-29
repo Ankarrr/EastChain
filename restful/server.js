@@ -33,8 +33,27 @@ router.use( BodyParser.text() );
 // Methods
 // -------
 
+function transferWine( request, response ) {
+    var barcode = request.params.barcode;
+    var reciverAddress = request.params.reciverAddress;
+
+    // Transfer Wine
+
+    response.writeHead( 200, {
+        'Content-Type' : 'text/plain'
+    });
+    var json = JSON.stringify({
+        txHash: "0xdd094993a095c6d947aa7d2eb8b9be8b7ba546024c8942b05a1fec7efa4683ac"
+    });
+    response.end( json );
+}
+router.get( '/transferWine/:barcode/:reciverAddress', transferWine);
+
 function queryWine( request, response ) {
     var barcode = request.params.barcode;
+
+    // Query Wine
+
     response.writeHead( 200, {
         'Content-Type' : 'text/plain'
     });
