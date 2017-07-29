@@ -11,8 +11,16 @@ app.listen(7698, function () {
   console.log('CORS-enabled web server listening on port 7698')
 })
 
-// ------
+var Web3 = require('web3');
+var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+console.log(web3.version);
 
+var abi = [ { constant: true, inputs: [], name: 'creator', outputs: [ [Object] ], payable: false, type: 'function' }, { constant: true, inputs: [ [Object] ], name: 'SorgHums', outputs: [ [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object] ], payable: false, type: 'function' }, { constant: false, inputs: [ [Object], [Object] ], name: 'transferSunghum', outputs: [], payable: false, type: 'function' }, { constant: false, inputs: [ [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object] ], name: 'createSorghum', outputs: [], payable: false, type: 'function' }, { inputs: [], payable: false, type: 'constructor' } ];
+
+var wineContract = new web3.eth.Contract(abi, "0x674a19c1d38bc451fba1341aeef4aaf7af339ecf");
+
+// ------
+/*
 var BodyParser = require( 'body-parser' );
 
 var Http = require( 'http' ),
@@ -39,7 +47,7 @@ server.listen( 3000, function() {
 });
 
 router.use( BodyParser.text() );
-
+*/
 // ---------------
 // Methods for app
 // ---------------
@@ -50,12 +58,12 @@ app.get('/queryWine/:barcode', function (req, res, next) {
     res.json({
         owner: "0xc39f297a170f250ca99ee92beec0414b297f7e9b",
         name: "KINMEN WEDDING LIQUOR",
-        productType: "Wine",
+        productType: "Sorghum wine",
         date: "20170309",
-        origin: "Taiwan Kinmen",
+        origin: "Taiwan, Kinmen",
         price: 2500,
-        purpose: "Wedding",
-        description: "600ml, 58 degrees, contact: 0800-033-823"
+        purpose: "Business",
+        description: "Ingredients: sorghum and wheat, Volume: 600 ml, ABV: 58 degrees, Contact information: 0800-033-823"
     });
 })
 
@@ -72,8 +80,9 @@ app.get('/queryWineHistory/:barcode', function (req, res, next) {
     var barcode = req.params.barcode;
     // query wine history by barcode
     var txs = [
-        {"name": "Anderson", "receiverAddress": "0x3be418402d328b84973a3fb4f5cef84d9419296b", "txHash": "0x027f0fc3deb1f60cee1a27063a005425400d65b3a248bebe7b29856f80c72582"},
-        {"name": "EastSun", "receiverAddress": "0xb1e63296dd87308bc69d9dc329a70e1e70a6283db94142e884e834e2d7f979c7", "txHash": "0xae12aa5f569e48d245c016e65974b08a01025a4a4ddaa0c91ea6cd7ebc5c6b46"},
+        {"name": "Kinmen Kaoliang Liquor Inc.", "receiverAddress": "0x3be418402d328b84973a3fb4f5cef84d9419296b", "txHash": "0x027f0fc3deb1f60cee1a27063a005425400d65b3a248bebe7b29856f80c72582"},
+        {"name": "Anderson", "receiverAddress": "0xc39f297a170f250ca99ee92beec0414b297f7e9b", "txHash": "0x9fb326551cc66b6cd1d4d23733e174ea01d2072f3151317fe70685a74d66c4b7"},
+        {"name": "EastSun", "receiverAddress": "0x0f8ea307971588205dae85f25371b0659c372456", "txHash": "0xdd094993a095c6d947aa7d2eb8b9be8b7ba546024c8942b05a1fec7efa4683ac"},
     ];
     res.json({
         txHistory: txs
@@ -83,7 +92,7 @@ app.get('/queryWineHistory/:barcode', function (req, res, next) {
 // -------
 // Methods
 // -------
-
+/*
 function transferWine( request, response ) {
     var barcode = request.params.barcode;
     var reciverAddress = request.params.reciverAddress;
@@ -140,3 +149,4 @@ function queryWineHistory( request, response ) {
     response.end( json );
 }
 router.get( '/queryWineHistory/:barcode', queryWineHistory );
+*/
