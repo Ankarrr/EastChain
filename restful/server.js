@@ -2,6 +2,11 @@
 // Server
 // ------
 
+var cors = require('cors')
+var express = require('express');
+var app = express()
+app.use(cors())
+
 var BodyParser = require( 'body-parser' );
 
 var Http = require( 'http' ),
@@ -28,6 +33,28 @@ server.listen( 3000, function() {
 });
 
 router.use( BodyParser.text() );
+
+// -----------
+// app.methods
+// -----------
+
+app.listen(7698, function () {
+  console.log('CORS-enabled web server listening on port 7698')
+})
+
+app.get('/queryWine/:barcode', function (req, res, next) {
+    // query by barcode
+    res.json({
+        owner: "0xc39f297a170f250ca99ee92beec0414b297f7e9b",
+        name: "KINMEN WEDDING LIQUOR",
+        productType: "Wine",
+        date: "20170309",
+        origin: "Taiwan Kinmen",
+        price: 2500,
+        purpose: "Wedding",
+        description: "600ml, 58 degrees, contact: 0800-033-823"
+    });
+})
 
 // -------
 // Methods
