@@ -70,3 +70,22 @@ function queryWine( request, response ) {
     response.end( json );
 }
 router.get( '/queryWine/:barcode', queryWine );
+
+function queryWineHistory( request, response ) {
+    var barcode = request.params.barcode;
+
+    // Query Wine History
+    var txs = [
+        {"name": "Anderson", "address": "0x3be418402d328b84973a3fb4f5cef84d9419296b", "tx_hash": "0x027f0fc3deb1f60cee1a27063a005425400d65b3a248bebe7b29856f80c72582"},
+        {"name": "EastSun", "address": "0xb1e63296dd87308bc69d9dc329a70e1e70a6283db94142e884e834e2d7f979c7", "address": "0xae12aa5f569e48d245c016e65974b08a01025a4a4ddaa0c91ea6cd7ebc5c6b46"},
+    ];
+
+    response.writeHead( 200, {
+        'Content-Type' : 'text/plain'
+    });
+    var json = JSON.stringify({
+        txHistory: txs
+    });
+    response.end( json );
+}
+router.get( '/queryWineHistory/:barcode', queryWineHistory );
