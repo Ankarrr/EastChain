@@ -7,6 +7,12 @@ var express = require('express');
 var app = express()
 app.use(cors())
 
+app.listen(7698, function () {
+  console.log('CORS-enabled web server listening on port 7698')
+})
+
+// ------
+
 var BodyParser = require( 'body-parser' );
 
 var Http = require( 'http' ),
@@ -34,15 +40,12 @@ server.listen( 3000, function() {
 
 router.use( BodyParser.text() );
 
-// -----------
-// app.methods
-// -----------
-
-app.listen(7698, function () {
-  console.log('CORS-enabled web server listening on port 7698')
-})
+// ---------------
+// Methods for app
+// ---------------
 
 app.get('/queryWine/:barcode', function (req, res, next) {
+    var barcode = req.params.barcode;
     // query by barcode
     res.json({
         owner: "0xc39f297a170f250ca99ee92beec0414b297f7e9b",
@@ -53,6 +56,27 @@ app.get('/queryWine/:barcode', function (req, res, next) {
         price: 2500,
         purpose: "Wedding",
         description: "600ml, 58 degrees, contact: 0800-033-823"
+    });
+})
+
+app.get('/transferWine/:barcode/:reciverAddress', function (req, res, next) {
+    var barcode = req.params.barcode;
+    var reciverAddress = req.params.reciverAddress;
+    // transfer Wine
+    res.json({
+        txHash: "0xdd094993a095c6d947aa7d2eb8b9be8b7ba546024c8942b05a1fec7efa4683ac"
+    });
+});
+
+app.get('/queryWineHistory/:barcode', function (req, res, next) {
+    var barcode = req.params.barcode;
+    // query wine history by barcode
+    var txs = [
+        {"name": "Anderson", "receiverAddress": "0x3be418402d328b84973a3fb4f5cef84d9419296b", "txHash": "0x027f0fc3deb1f60cee1a27063a005425400d65b3a248bebe7b29856f80c72582"},
+        {"name": "EastSun", "receiverAddress": "0xb1e63296dd87308bc69d9dc329a70e1e70a6283db94142e884e834e2d7f979c7", "txHash": "0xae12aa5f569e48d245c016e65974b08a01025a4a4ddaa0c91ea6cd7ebc5c6b46"},
+    ];
+    res.json({
+        txHistory: txs
     });
 })
 
