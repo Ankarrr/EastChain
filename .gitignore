@@ -1,4 +1,6 @@
 .DS_Store
 *.json
 *.swp
+
 node/
+restful/node_modules/

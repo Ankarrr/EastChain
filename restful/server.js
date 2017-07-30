@@ -12,12 +12,12 @@ app.listen(7698, function () {
 })
 
 var Web3 = require('web3');
-var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+var web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 console.log(web3.version);
 
-var abi = [ { constant: true, inputs: [], name: 'creator', outputs: [ [Object] ], payable: false, type: 'function' }, { constant: true, inputs: [ [Object] ], name: 'SorgHums', outputs: [ [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object] ], payable: false, type: 'function' }, { constant: false, inputs: [ [Object], [Object] ], name: 'transferSunghum', outputs: [], payable: false, type: 'function' }, { constant: false, inputs: [ [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object] ], name: 'createSorghum', outputs: [], payable: false, type: 'function' }, { inputs: [], payable: false, type: 'constructor' } ];
+var abi = [ { "constant": true, "inputs": [], "name": "creator", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "type": "function" }, { "constant": false, "inputs": [ { "name": "barcode", "type": "uint256" } ], "name": "querySorghum", "outputs": [ { "name": "ownerAddress", "type": "address" } ], "payable": false, "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "SorgHums", "outputs": [ { "name": "owner", "type": "address" }, { "name": "name", "type": "string" }, { "name": "productType", "type": "string" }, { "name": "date", "type": "string" }, { "name": "origin", "type": "string" }, { "name": "price", "type": "uint256" }, { "name": "purpose", "type": "string" }, { "name": "description", "type": "string" } ], "payable": false, "type": "function" }, { "constant": false, "inputs": [ { "name": "barcode", "type": "uint256" }, { "name": "receiver", "type": "address" } ], "name": "transferSunghum", "outputs": [], "payable": false, "type": "function" }, { "constant": false, "inputs": [ { "name": "barcode", "type": "uint256" }, { "name": "owner", "type": "address" }, { "name": "name", "type": "string" }, { "name": "productType", "type": "string" }, { "name": "date", "type": "string" }, { "name": "origin", "type": "string" }, { "name": "price", "type": "uint256" }, { "name": "purpose", "type": "string" }, { "name": "description", "type": "string" } ], "name": "createSorghum", "outputs": [], "payable": false, "type": "function" }, { "inputs": [], "payable": false, "type": "constructor" } ];
 
-var wineContract = new web3.eth.Contract(abi, "0x674a19c1d38bc451fba1341aeef4aaf7af339ecf");
+var wineContract = new web3.eth.Contract(abi, "0x19e424a5703994f8e590b0a5263229ab8bf7683e");
 
 // ------
 /*
@@ -48,6 +48,26 @@ server.listen( 3000, function() {
 
 router.use( BodyParser.text() );
 */
+
+// ---------
+// test data
+// ---------
+var txs = [
+    {"name": "Kinmen Kaoliang Liquor Inc.", "receiverAddress": "0x3be418402d328b84973a3fb4f5cef84d9419296b", "txHash": "0x027f0fc3deb1f60cee1a27063a005425400d65b3a248bebe7b29856f80c72582"},
+    {"name": "Anderson", "receiverAddress": "0xc39f297a170f250ca99ee92beec0414b297f7e9b", "txHash": "0x9fb326551cc66b6cd1d4d23733e174ea01d2072f3151317fe70685a74d66c4b7"}
+];
+
+var wineInfo = {
+    owner: "0xc39f297a170f250ca99ee92beec0414b297f7e9b",
+    name: "KINMEN WEDDING LIQUOR",
+    productType: "Sorghum wine",
+    date: "20170309",
+    origin: "Taiwan, Kinmen",
+    price: 2500,
+    purpose: "Business",
+    description: "Ingredients: sorghum and wheat, Volume: 600 ml, ABV: 58 degrees, Contact information: 0800-033-823"
+};
+
 // ---------------
 // Methods for app
 // ---------------
@@ -55,39 +75,48 @@ router.use( BodyParser.text() );
 app.get('/queryWine/:barcode', function (req, res, next) {
     var barcode = req.params.barcode;
     // query by barcode
-    res.json({
-        owner: "0xc39f297a170f250ca99ee92beec0414b297f7e9b",
-        name: "KINMEN WEDDING LIQUOR",
-        productType: "Sorghum wine",
-        date: "20170309",
-        origin: "Taiwan, Kinmen",
-        price: 2500,
-        purpose: "Business",
-        description: "Ingredients: sorghum and wheat, Volume: 600 ml, ABV: 58 degrees, Contact information: 0800-033-823"
-    });
+    var wineInfo = QueryWine(barcode);
+    res.json(wineInfo);
 })
 
-app.get('/transferWine/:barcode/:reciverAddress', function (req, res, next) {
+app.get('/transferWine/:barcode/:receiverAddress', function (req, res, next) {
     var barcode = req.params.barcode;
-    var reciverAddress = req.params.reciverAddress;
+    var receiverAddress = req.params.receiverAddress;
     // transfer Wine
+    var txHash = TransferWine(barcode, receiverAddress);
     res.json({
-        txHash: "0xdd094993a095c6d947aa7d2eb8b9be8b7ba546024c8942b05a1fec7efa4683ac"
+        txHash: txHash
     });
 });
 
 app.get('/queryWineHistory/:barcode', function (req, res, next) {
     var barcode = req.params.barcode;
     // query wine history by barcode
-    var txs = [
-        {"name": "Kinmen Kaoliang Liquor Inc.", "receiverAddress": "0x3be418402d328b84973a3fb4f5cef84d9419296b", "txHash": "0x027f0fc3deb1f60cee1a27063a005425400d65b3a248bebe7b29856f80c72582"},
-        {"name": "Anderson", "receiverAddress": "0xc39f297a170f250ca99ee92beec0414b297f7e9b", "txHash": "0x9fb326551cc66b6cd1d4d23733e174ea01d2072f3151317fe70685a74d66c4b7"},
-        {"name": "EastSun", "receiverAddress": "0x0f8ea307971588205dae85f25371b0659c372456", "txHash": "0xdd094993a095c6d947aa7d2eb8b9be8b7ba546024c8942b05a1fec7efa4683ac"},
-    ];
+    var txs = QueryWineHistory(barcode);
     res.json({
         txHistory: txs
     });
 })
+
+function QueryWine(barcode) {
+    // wineContract.methods.SorgHums(barcode).call().then(function(result){
+    //     return result;
+    // });
+    return wineInfo;
+};
+
+function TransferWine(barcode, receiverAddress) {
+    // wineContract.methods.transferSunghum(4719433007925, "0x0f8ea307971588205dae85f25371b0659c372456").call().then(function(result){
+    //      return result;
+    // });
+    var newTxHash = "0xdd094993a095c6d947aa7d2eb8b9be8b7ba546024c8942b05a1fec7efa4683ac";
+    txs.push({"name": "EastSun", "receiverAddress": "0x0f8ea307971588205dae85f25371b0659c372456", "txHash": newTxHash});
+    return newTxHash;
+}
+
+function QueryWineHistory(barcode) {
+    return txs;
+}
 
 // -------
 // Methods
